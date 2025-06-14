@@ -42,10 +42,10 @@ def swap_player_color(player, players, target_color):
 def check_win_condition(players, square):
 	total_cells = square * square
 	if players[0]["score"] > total_cells // 2:
-		return 0  # Player 0 wins
+		return 0  # player 0 wins
 	elif players[1]["score"] > total_cells // 2:
-		return 1  # Player 1 wins
-	return None  # No winner yet
+		return 1  # player 1 wins
+	return None  # no winner yet
 
 def traverse(player, players, color_set, gameboard):
 	# get starting position for the player
@@ -93,9 +93,7 @@ def flood_fill(row, col, old_color, new_color, gameboard, temp_marker):
 	
 	return count
 
-def main():
-	color_set = 7
-	square = 6
+def game(color_set, square):
 	gameboard = []
 	current_player = 0
 	# this set is player 1, then player 2
@@ -133,7 +131,12 @@ def main():
 		
 		# switch players
 		current_player = 1 - current_player
-		
-		time.sleep(5)
+	print (f"Player {current_player+1} Wins!")
 
+
+def main():
+	color_set = 7
+	square = 6
+	game(color_set,square)
+	
 main()
