@@ -34,9 +34,10 @@ def available_colors(players, color_set):
 			available_color_set.append(elm)
 	return available_color_set
 
-def swap_colors(player, players, target_color):
+def swap_player_color(player, players, target_color):
 	players[player]["previous_color"] = players[player]["current_color"]
 	players[player]["current_color"] = target_color
+	return players
 
 def check_win_condition(players, square):
 	total_cells = square * square
@@ -47,47 +48,48 @@ def check_win_condition(players, square):
 	return None  # No winner yet
 
 def traverse(player, players, color_set, gameboard):
-	# Get starting position for the player
+	# get starting position for the player
 	start_row, start_col = players[player]["start_pos"]
-	# Get the old color (what the player's territory currently is)
+	# get the old color (what the player's territory currently is)
 	old_color = gameboard[start_row][start_col]
 	new_color = players[player]["current_color"]
+	temp_marker = color_set  # use color_set as the temp marker value (its +1 what can be in available_colors)
 	
-	# First, do the flood fill to mark territory
-	count = flood_fill(start_row, start_col, old_color, new_color, gameboard, color_set)
+	# flood fill to mark territory
+	count = flood_fill(start_row, start_col, old_color, new_color, gameboard, temp_marker)
 	
-	# Then convert all marked cells (color_set) to the actual new color
+	# convert all marked cells (temp_marker) to the actual new color
 	for i in range(len(gameboard)):
 		for j in range(len(gameboard[0])):
-			if gameboard[i][j] == color_set:
+			if gameboard[i][j] == temp_marker:
 				gameboard[i][j] = new_color
 	
-	# Update player's score
+	# update player's score
 	players[player]["score"] = count
 	return count
 
-def flood_fill(row, col, old_color, new_color, gameboard, color_set):
+def flood_fill(row, col, old_color, new_color, gameboard, temp_marker):
 	# stop condition - out of bounds
 	if row < 0 or row >= len(gameboard) or col < 0 or col >= len(gameboard[0]):
 		return 0
 	
-	# stop condition - already visited (marked with color_set)
-	if gameboard[row][col] == color_set:
+	# stop condition – already visited (marked with temp_marker)
+	if gameboard[row][col] == temp_marker:
 		return 0
 	
-	# Stop condition - not player's territory and not capturable
+	# stop condition - not player's territory and not capturable
 	if gameboard[row][col] != old_color and gameboard[row][col] != new_color:
 		return 0
 	
-	# Recursive step - this cell is either player's territory or capturable
-	gameboard[row][col] = color_set  # Mark as visited
+	# recursive step - this cell is either player's territory or capturable
+	gameboard[row][col] = temp_marker  # Mark as visited
 	count = 1
 	
-	# Recurse in 4 directions
-	count += flood_fill(row + 1, col, old_color, new_color, gameboard, color_set)
-	count += flood_fill(row - 1, col, old_color, new_color, gameboard, color_set)
-	count += flood_fill(row, col + 1, old_color, new_color, gameboard, color_set)
-	count += flood_fill(row, col - 1, old_color, new_color, gameboard, color_set)
+	# recurse in 4 directions
+	count += flood_fill(row + 1, col, old_color, new_color, gameboard, temp_marker)
+	count += flood_fill(row - 1, col, old_color, new_color, gameboard, temp_marker)
+	count += flood_fill(row, col + 1, old_color, new_color, gameboard, temp_marker)
+	count += flood_fill(row, col - 1, old_color, new_color, gameboard, temp_marker)
 	
 	return count
 
@@ -103,7 +105,7 @@ def main():
 	]
 	gameboard = generate_inital_board(gameboard, square, color_set)
 	
-	# Initialize player colors from their starting positions
+	# initialize player colors from their starting positions
 	players[0]["current_color"] = gameboard[0][-1]
 	players[1]["current_color"] = gameboard[-1][0]
 	
@@ -126,10 +128,10 @@ def main():
 				chosen_color = None
 				print(f"Please enter one of the available colors: {available_colors(players, color_set)}")
 
-		swap_colors(current_player, players, chosen_color)
+		players = swap_player_color(current_player, players, chosen_color)
 		traverse(current_player, players, color_set, gameboard)
 		
-		# Switch players
+		# switch players
 		current_player = 1 - current_player
 		
 		time.sleep(5)
