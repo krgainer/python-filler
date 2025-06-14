@@ -48,7 +48,7 @@ def check_win_condition(players, square):
 		return 1  # player 1 wins
 	return None  # no winner yet
 
-def get_player_color_input(current_player, players, color_set)
+def get_player_color_input(current_player, players, color_set):
 	chosen_color = None
 	while(chosen_color == None):
 		chosen_color = int(input("Choose a color: ").strip().lower())
