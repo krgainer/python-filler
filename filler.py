@@ -1,6 +1,8 @@
 import random
 import time
 
+debug_print = True
+
 def generate_inital_board(gameboard_array, square, color_set):
 	#generate gameboard
 	for i in range(square):
@@ -44,17 +46,25 @@ def check_win_condition(players, square):
 		return 1  # Player 1 wins
 	return None  # No winner yet
 
-def game():
-	pass
-
 def traverse(player, players, color_set, gameboard):
-	# this may or may not be the acutally recursive traversal function. 
-	# it must spread the new color across current territory, capture adjacent cells, and count teritory. 
-	# I'm tempted to create two "mask" arrays for each player, but that would get memory intesive kinda quickly? I mean each val in the array can be bool, but theres two of them.
-	if player == 0:
-		flood_fill(0,-1,color_set+1,gameboard,player)
-	else:
-		flood_fill(-1,0,color_set+1,gameboard,player)
+	# Get starting position for the player
+	start_row, start_col = players[player]["start_pos"]
+	# Get the old color (what the player's territory currently is)
+	old_color = gameboard[start_row][start_col]
+	new_color = players[player]["current_color"]
+	
+	# First, do the flood fill to mark territory
+	count = flood_fill(start_row, start_col, old_color, new_color, gameboard, color_set)
+	
+	# Then convert all marked cells (color_set) to the actual new color
+	for i in range(len(gameboard)):
+		for j in range(len(gameboard[0])):
+			if gameboard[i][j] == color_set:
+				gameboard[i][j] = new_color
+	
+	# Update player's score
+	players[player]["score"] = count
+	return count
 
 def flood_fill(row, col, old_color, new_color, gameboard, color_set):
 	# stop condition - out of bounds
@@ -109,18 +119,19 @@ def main():
 		else:
 			print(f"Player 2 - You can chose from any of these numbers: {available_colors(players, color_set)}")
 		
-		# TODO: Get player input for color choice
-		# chosen_color = int(input("Choose a color: "))
-		
-		# TODO: Validate choice is in available_colors
-		
-		# TODO: Update player color and traverse
-		# swap_colors(current_player, players, chosen_color)
-		# traverse(current_player, players, color_set, gameboard)
+		chosen_color = None
+		while(chosen_color == None):
+			chosen_color = int(input("Choose a color: ").strip().lower())
+			if chosen_color not in available_colors(players, color_set):
+				chosen_color = None
+				print(f"Please enter one of the available colors: {available_colors(players, color_set)}")
+
+		swap_colors(current_player, players, chosen_color)
+		traverse(current_player, players, color_set, gameboard)
 		
 		# Switch players
 		current_player = 1 - current_player
 		
-		time.sleep(10)
+		time.sleep(5)
 
 main()
