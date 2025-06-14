@@ -5,3 +5,4 @@ I'm guessing I should do a recursive travel thing, passing current square. It ch
 This will not be fun
 
 
+Update: it works but I've made a mistake and need to figure out min/max row,col differently.

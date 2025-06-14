@@ -48,9 +48,15 @@ def check_win_condition(players, square):
 		return 1  # player 1 wins
 	return None  # no winner yet
 
-def traverse(player, players, color_set, gameboard):
+
+
+def traverse(player, players, color_set, gameboard,square):
 	# get starting position for the player
 	start_row, start_col = players[player]["start_pos"]
+	if start_row < 0:
+		start_row = square-1
+	if start_col < 0:
+		start_col = square-1
 	# get the old color (what the player's territory currently is)
 	old_color = gameboard[start_row][start_col]
 	new_color = players[player]["current_color"]
@@ -137,10 +143,12 @@ def game(color_set, square):
 				print(f"Please enter one of the available colors: {available_colors(players, color_set)}")
 
 		players = swap_player_color(current_player, players, chosen_color)
-		traverse(current_player, players, color_set, gameboard)
+		traverse(current_player, players, color_set, gameboard,square)
 		
 		# switch players
 		current_player = 1 - current_player
+	print("Final board:")
+	helpful_print(gameboard)
 	print (f"Player {current_player+1} Wins!")
 
 
