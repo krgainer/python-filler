@@ -25,9 +25,9 @@ def helpful_print(value:list):
 	for i in value:
 		print(i)
 
-def available_colors(players, color_set):
+def available_colors(player, players, color_set):
 	curr_color = [players[0]["current_color"], players[1]["current_color"]]
-	prev_color = [players[0]["previous_color"], players[1]["previous_color"]]
+	prev_color = [players[player]["previous_color"]]
 	color_list = range(color_set)
 	available_color_set = []
 	for elm in color_list:
@@ -48,7 +48,14 @@ def check_win_condition(players, square):
 		return 1  # player 1 wins
 	return None  # no winner yet
 
-
+def get_player_color_input(current_player, players, color_set)
+	chosen_color = None
+	while(chosen_color == None):
+		chosen_color = int(input("Choose a color: ").strip().lower())
+		if (chosen_color not in available_colors(current_player, players, color_set)) or (chosen_color != int):
+			chosen_color = None
+			print(f"Please enter one of the available colors: {available_colors(current_player, players, color_set)}")
+	return chosen_color
 
 def traverse(player, players, color_set, gameboard,square):
 	# get starting position for the player
@@ -131,16 +138,11 @@ def game(color_set, square):
 		helpful_print(gameboard)
 		
 		if current_player == 0:
-			print(f"Player 1 - You can chose from any of these numbers: {available_colors(players, color_set)}")
+			print(f"Player 1 - You can chose from any of these numbers: {available_colors(current_player, players, color_set)}")
 		else:
-			print(f"Player 2 - You can chose from any of these numbers: {available_colors(players, color_set)}")
+			print(f"Player 2 - You can chose from any of these numbers: {available_colors(current_player, players, color_set)}")
 		
-		chosen_color = None
-		while(chosen_color == None):
-			chosen_color = int(input("Choose a color: ").strip().lower())
-			if chosen_color not in available_colors(players, color_set):
-				chosen_color = None
-				print(f"Please enter one of the available colors: {available_colors(players, color_set)}")
+		chosen_color = get_player_color_input(current_player, players, color_set)
 
 		players = swap_player_color(current_player, players, chosen_color)
 		traverse(current_player, players, color_set, gameboard,square)
