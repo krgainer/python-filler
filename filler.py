@@ -15,7 +15,8 @@ def generate_inital_board(gameboard_array, square, color_set):
 		del temp_list
 	#genrerate player colors
 	while gameboard_array[0][-1] == gameboard_array[-1][0]:
-		print("duplicate, swapping @ ",gameboard_array[0][-1],gameboard_array[-1][0])
+		if debug_print:
+			print("duplicate, swapping @ ",gameboard_array[0][-1],gameboard_array[-1][0])
 		gameboard_array[-1][0] = random.randrange(0, color_set)
 	# return board and player colors
 	return gameboard_array
@@ -57,7 +58,8 @@ def traverse(player, players, color_set, gameboard):
 	
 	# flood fill to mark territory
 	count = flood_fill(start_row, start_col, old_color, new_color, gameboard, temp_marker)
-	
+	if debug_print:
+		helpful_print(gameboard)
 	# convert all marked cells (temp_marker) to the actual new color
 	for i in range(len(gameboard)):
 		for j in range(len(gameboard[0])):
@@ -71,18 +73,26 @@ def traverse(player, players, color_set, gameboard):
 def flood_fill(row, col, old_color, new_color, gameboard, temp_marker):
 	# stop condition - out of bounds
 	if row < 0 or row >= len(gameboard) or col < 0 or col >= len(gameboard[0]):
+		if debug_print:
+			print(f"stop @ row {row}, col {col}. oob")
 		return 0
 	
 	# stop condition – already visited (marked with temp_marker)
 	if gameboard[row][col] == temp_marker:
+		if debug_print:
+			print(f"stop @ row {row}, col {col}. marked")
 		return 0
 	
 	# stop condition - not player's territory and not capturable
 	if gameboard[row][col] != old_color and gameboard[row][col] != new_color:
+		if debug_print:
+			print(f"stop @ row {row}, col {col}. not valid take")
 		return 0
 	
 	# recursive step - this cell is either player's territory or capturable
 	gameboard[row][col] = temp_marker  # Mark as visited
+	if debug_print:
+		print("Oh hi mark")
 	count = 1
 	
 	# recurse in 4 directions
