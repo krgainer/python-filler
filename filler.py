@@ -51,10 +51,15 @@ def check_win_condition(players, square):
 def get_player_color_input(current_player, players, color_set):
 	chosen_color = None
 	while(chosen_color == None):
-		chosen_color = int(input("Choose a color: ").strip().lower())
-		if (chosen_color not in available_colors(current_player, players, color_set)) or (chosen_color != int):
-			chosen_color = None
+		temp_chosen_color = input("Choose a color: ").strip().lower()
+		try:
+			temp_chosen_color = int(temp_chosen_color)
+		except:
+			print("Please enter a number!")
+		if temp_chosen_color not in available_colors(current_player, players, color_set):
 			print(f"Please enter one of the available colors: {available_colors(current_player, players, color_set)}")
+		else:
+			chosen_color = temp_chosen_color
 	return chosen_color
 
 def traverse(player, players, color_set, gameboard,square):
@@ -104,9 +109,9 @@ def flood_fill(row, col, old_color, new_color, gameboard, temp_marker):
 	
 	# recursive step - this cell is either player's territory or capturable
 	gameboard[row][col] = temp_marker  # Mark as visited
-	if debug_print:
-		print("Oh hi mark")
 	count = 1
+	if debug_print:
+		print(f"oh hi mark @ row {row}, col {col}")
 	
 	# recurse in 4 directions
 	count += flood_fill(row + 1, col, old_color, new_color, gameboard, temp_marker)
@@ -150,6 +155,7 @@ def game(color_set, square):
 		# switch players
 		current_player = 1 - current_player
 	print("Final board:")
+	current_player = 1 - current_player # switch back to the winner
 	helpful_print(gameboard)
 	print (f"Player {current_player+1} Wins!")
 
