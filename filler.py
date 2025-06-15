@@ -1,5 +1,8 @@
 import random
 import time
+import sys
+
+sys.setrecursionlimit(10000) # is this an issue? probably
 
 debug_print = True
 
@@ -124,11 +127,13 @@ def flood_fill(row, col, old_color, new_color, gameboard, temp_marker):
 def game(color_set, square):
 	gameboard = []
 	current_player = 0
+
 	# this set is player 1, then player 2
 	players = [
 		{"current_color": None, "previous_color": None, "score": 1, "start_pos": (0, -1)},
 		{"current_color": None, "previous_color": None, "score": 1, "start_pos": (-1, 0)}
 	]
+
 	gameboard = generate_inital_board(gameboard, square, color_set)
 	
 	# initialize player colors from their starting positions
@@ -154,15 +159,18 @@ def game(color_set, square):
 		
 		# switch players
 		current_player = 1 - current_player
+
+	print("!"*500)
 	print("Final board:")
 	current_player = 1 - current_player # switch back to the winner
 	helpful_print(gameboard)
+	print(f"Player One Final Score: {players[0]['score']}\nPlayer Two Final Score: {players[1]['score']}")
 	print (f"Player {current_player+1} Wins!")
 
 
 def main():
-	color_set = 7
-	square = 6
+	color_set = 6
+	square = 128
 	game(color_set,square)
 	
 main()
