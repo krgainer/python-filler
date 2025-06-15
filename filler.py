@@ -17,6 +17,7 @@ def generate_inital_board(gameboard_array, square, color_set):
 		gameboard_array.append(temp_list)
 		del temp_list
 	#genrerate player colors
+	# this is jank and also doesnt account for starting colors touching nearby colors. players should never be able to start at anything besides 1 point (no touching like-colors)
 	while gameboard_array[0][-1] == gameboard_array[-1][0]:
 		if debug_print:
 			print("duplicate, swapping @ ",gameboard_array[0][-1],gameboard_array[-1][0])
@@ -69,18 +70,16 @@ def traverse(player, players, color_set, gameboard,square):
 	# get starting position for the player
 	start_row, start_col = players[player]["start_pos"]
 	if start_row < 0:
-		start_row = square-1
+		start_row = square-1 # get abs, not array rel
 	if start_col < 0:
-		start_col = square-1
-	# get the old color (what the player's territory currently is)
-	old_color = gameboard[start_row][start_col]
+		start_col = square-1 # get abs, not array rel
+	old_color = gameboard[start_row][start_col] # get the old color (what the player's territory currently is)
 	new_color = players[player]["current_color"]
 	temp_marker = color_set  # use color_set as the temp marker value (its +1 what can be in available_colors)
 	
 	# flood fill to mark territory
 	count = flood_fill(start_row, start_col, old_color, new_color, gameboard, temp_marker)
-	if debug_print:
-		helpful_print(gameboard)
+
 	# convert all marked cells (temp_marker) to the actual new color
 	for i in range(len(gameboard)):
 		for j in range(len(gameboard[0])):
@@ -116,7 +115,7 @@ def flood_fill(row, col, old_color, new_color, gameboard, temp_marker):
 	if debug_print:
 		print(f"oh hi mark @ row {row}, col {col}")
 	
-	# recurse in 4 directions
+	# recurse in 4 directions (should it be 8?)
 	count += flood_fill(row + 1, col, old_color, new_color, gameboard, temp_marker)
 	count += flood_fill(row - 1, col, old_color, new_color, gameboard, temp_marker)
 	count += flood_fill(row, col + 1, old_color, new_color, gameboard, temp_marker)
